@@ -1,6 +1,6 @@
 ﻿# Room Temperature Display
 
-A simple and customizable RimWorld mod that displays room temperatures directly on the map for quick reference. Supports color-coded temperature ranges and integrates with the vanilla heat overlay for a seamless UI experience.
+A simple and customizable Rimworld mod that displays room temperatures directly on the map for quick reference. Supports color-coded temperature ranges and integrates with the vanilla heat overlay for a seamless UI experience.
 
 ## Features
 
@@ -23,13 +23,13 @@ Temperature units respect the game's `TemperatureDisplayMode` (Fahrenheit, Celsi
 
 ## Compatibility
 
-- Built for RimWorld 1.5
+- Built for RimWorld 1.5, 1.6
 - Safe to add or remove mid-save
 - No known mod conflicts
 
 ## Installation
 
-1. Subscribe on the Steam Workshop (or place in your `Mods/` folder).
+1. Subscribe on the Steam Workshop.
 2. Enable the mod in the RimWorld mod menu.
 3. Use the toggle button (thermometer icon) in the lower right UI to enable/disable display.
 4. Open settings to adjust temperature ranges and color preferences.
@@ -43,7 +43,7 @@ Temperature units respect the game's `TemperatureDisplayMode` (Fahrenheit, Celsi
 ## Credits
 
 Created by **hawqeye19**  
-Special thanks to the RimWorld modding community and Harmony library.
+Special thanks to the RimWorld modding community and the Harmony team.
 
 ## License
 
