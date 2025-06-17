@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+	<RimWorld15Path>C:\Games\Rimworld\1.5\RimWorldWin64_Data\Managed</RimWorld15Path>
+	<RimWorld16Path>C:\Games\Rimworld\1.6\RimWorldWin64_Data\Managed</RimWorld16Path>
+  </PropertyGroup>
+</Project>

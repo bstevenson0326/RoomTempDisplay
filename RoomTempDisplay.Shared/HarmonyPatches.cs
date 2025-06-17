@@ -11,7 +11,7 @@ namespace RoomTempDisplay.Patch
     {
         static HarmonyPatches()
         {
-            var harmony = new Harmony("com.hawqeye19.roomtemperaturedisplay");
+            var harmony = new Harmony("com.hawqeye19.RoomTempDisplay");
 
             // Patch for tab label display
             harmony.Patch(
@@ -32,7 +32,7 @@ namespace RoomTempDisplay.Patch
                 Log.Warning("[RoomTempDisplay] Failed to find PlaySettings.DoPlaySettingsGlobalControls.");
             }
 
-            Log.Message("[RoomTempDisplay] Harmony patches applied.");
+            Log.Message("[RoomTempDisplay] Initialized.");
         }
 
         [HarmonyPatch(typeof(Room), nameof(Room.Notify_RoomShapeChanged))]

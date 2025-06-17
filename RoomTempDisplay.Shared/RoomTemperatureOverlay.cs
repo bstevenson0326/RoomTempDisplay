@@ -8,6 +8,7 @@ namespace RoomTempDisplay
 {
     internal static class RoomTemperatureOverlay
     {
+        // Fix for CS8370: Replace collection expressions with explicit instantiation  
         internal static readonly Dictionary<int, IntVec3> RoomLabelCache = new Dictionary<int, IntVec3>();
 
         private struct TempLabelData
@@ -23,11 +24,17 @@ namespace RoomTempDisplay
         internal static void DrawRoomTemperatures()
         {
             // Exit if world map is currently rendered
+#if RW_1_5
             if (WorldRendererUtility.WorldRenderedNow)
             {
                 return;
             }
-
+#else
+            if (WorldRendererUtility.CurrentWorldRenderMode == WorldRenderMode.Planet)
+            {
+                return;
+            }
+#endif
             if (!RoomTempToggleState.ShowTemperatures && !Find.PlaySettings.showTemperatureOverlay)
             {
                 return;
@@ -41,7 +48,11 @@ namespace RoomTempDisplay
 
             bool overlayActive = Find.PlaySettings.showTemperatureOverlay;
 
+#if RW_1_5
             foreach (Room room in map.regionGrid.allRooms)
+#else
+            foreach (Room room in map.regionGrid.AllRooms)
+#endif
             {
                 if (room == null
                     || room.UsesOutdoorTemperature

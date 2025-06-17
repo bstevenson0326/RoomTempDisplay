@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\RimworldPaths.props" />
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+		<DefineConstants>RW_1_6</DefineConstants>
+		<OutputPath>..\..\1.6\Assemblies\</OutputPath>
+		<AssemblyName>RoomTempDisplay</AssemblyName>
+		<DebugType>none</DebugType>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+		<Optimize>true</Optimize>
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Version>1.0.16.0</Version>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Lib.Harmony" Version="2.3.6" PrivateAssets="all">
+			<IncludeAssets>compile; build; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\RoomTempDisplay.Shared\*.cs"/>
+		<Reference Include="Assembly-CSharp">
+			<HintPath>$(RimWorld16Path)/Assembly-CSharp.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine">
+			<HintPath>$(RimWorld16Path)\UnityEngine.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+			<HintPath>$(RimWorld16Path)\UnityEngine.CoreModule.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.TextRenderingModule">
+			<HintPath>$(RimWorld16Path)\UnityEngine.TextRenderingModule.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.IMGUIModule">
+			<HintPath>$(RimWorld16Path)\UnityEngine.IMGUIModule.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+	</ItemGroup>
+</Project>
