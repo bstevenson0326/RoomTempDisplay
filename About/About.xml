@@ -1,0 +1,36 @@
+<ModMetaData>
+  <name>RoomTempDisplay</name>
+  <author>hawqeye19</author>
+  <packageId>hawqeye19.RoomTempDisplay</packageId>
+  <modVersion>1.0.0</modVersion>
+<description>
+    Displays each room's temperature directly on the map, helping you monitor heating and cooling at a glance.
+
+    - Small wall-adjacent labels when the temperature overlay is off.
+    - Large centered labels when the in-game temperature overlay is on.
+    - Optional color gradients for cold, comfortable, and hot ranges.
+    - Settings menu to adjust comfort thresholds and gradient behavior.
+    - Toggle display with a Play Settings button (checkmark indicates active).
+    - Only shows for proper, fully roofed rooms (ignores doorways and outdoor spaces).
+    - Labels automatically update when room shapes change.
+
+    Requires Harmony.
+</description>
+  <modDependencies>
+    <li>
+      <packageId>brrainz.harmony</packageId>
+      <displayName>Harmony</displayName>
+      <steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
+      <downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
+    </li>
+  </modDependencies>
+  <loadAfter>
+    <li>brrainz.harmony</li>
+    <li>Ludeon.RimWorld</li>
+  </loadAfter>
+  <supportedVersions>
+    <li>1.5</li>
+    <li>1.6</li>
+  </supportedVersions>
+</ModMetaData>
+
