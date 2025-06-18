@@ -65,7 +65,7 @@ namespace RoomTempDisplay.Patch
                     SoundDefOf.Click.PlayOneShotOnCamera();
                 }
 
-                TooltipHandler.TipRegion(buttonRect, "Toggle Room Temperature Display");
+                TooltipHandler.TipRegion(buttonRect, "RoomTempDisplay_Label_Toggle".Translate());
 
                 if (RoomTempToggleState.ShowTemperatures)
                 {

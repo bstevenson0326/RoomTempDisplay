@@ -21,15 +21,15 @@ namespace RoomTempDisplay
 
             // ───────── Section: General Options ─────────
             Text.Font = GameFont.Medium;
-            listing.Label("Display Options");
+            listing.Label("RoomTempDisplay_Settings_Options".Translate());
             Text.Font = GameFont.Small;
-            listing.CheckboxLabeled("Color-code labels based on temperature", ref Settings.showTemperatureRangeColors);
+            listing.CheckboxLabeled("RoomTempDisplay_Settings_ShowColors".Translate(), ref Settings.showTemperatureRangeColors);
             listing.GapLine();
             listing.Gap();
 
             // ───────── Section: Gradient Extremes ─────────
             Text.Font = GameFont.Medium;
-            listing.Label("Gradient Range");
+            listing.Label("RoomTempDisplay_Settings_GradientLabel".Translate());
             Text.Font = GameFont.Small;
 
             string unitIcon = Prefs.TemperatureMode == TemperatureDisplayMode.Fahrenheit ? "\u00B0F" :
@@ -40,12 +40,12 @@ namespace RoomTempDisplay
             float coldMinDisplay = TemperatureUtils.ConvertFromFahrenheit(Settings.coldMinFahrenheit, mode);
             float hotMaxDisplay = TemperatureUtils.ConvertFromFahrenheit(Settings.hotMaxFahrenheit, mode);
 
-            listing.Label($"Cold Minimum ({unitIcon}): {coldMinDisplay:F0}");
+            listing.Label("RoomTempDisplay_Settings_ColdMin".Translate(unitIcon) + $" {coldMinDisplay:F0}");
             coldMinDisplay = listing.Slider(coldMinDisplay,
                 TemperatureUtils.ConvertFromFahrenheit(-100, mode),
                 TemperatureUtils.ConvertFromFahrenheit(Settings.minComfortableFahrenheit, mode));
 
-            listing.Label($"Hot Maximum ({unitIcon}): {hotMaxDisplay:F0}");
+            listing.Label("RoomTempDisplay_Settings_HotMax".Translate(unitIcon) + $" {hotMaxDisplay:F0}");
             hotMaxDisplay = listing.Slider(hotMaxDisplay,
                 TemperatureUtils.ConvertFromFahrenheit(Settings.maxComfortableFahrenheit, mode),
                 TemperatureUtils.ConvertFromFahrenheit(160, mode));
@@ -55,18 +55,18 @@ namespace RoomTempDisplay
 
             // ───────── Section: Comfortable Temperature Range ─────────
             Text.Font = GameFont.Medium;
-            listing.Label("Comfort Range");
+            listing.Label("RoomTempDisplay_Settings_ComfortLabel".Translate());
             Text.Font = GameFont.Small;
 
             float minComfortDisplay = TemperatureUtils.ConvertFromFahrenheit(Settings.minComfortableFahrenheit, mode);
             float maxComfortDisplay = TemperatureUtils.ConvertFromFahrenheit(Settings.maxComfortableFahrenheit, mode);
 
-            listing.Label($"Minimum Comfortable Temperature ({unitIcon}): {minComfortDisplay:F0}");
+            listing.Label("RoomTempDisplay_Settings_MinComfort".Translate(unitIcon) + $" {minComfortDisplay:F0}");
             minComfortDisplay = listing.Slider(minComfortDisplay,
                 TemperatureUtils.ConvertFromFahrenheit(-40, mode),
                 TemperatureUtils.ConvertFromFahrenheit(120, mode));
 
-            listing.Label($"Maximum Comfortable Temperature ({unitIcon}): {maxComfortDisplay:F0}");
+            listing.Label("RoomTempDisplay_Settings_MaxComfort".Translate(unitIcon) + $" {maxComfortDisplay:F0}");
             maxComfortDisplay = listing.Slider(maxComfortDisplay,
                 TemperatureUtils.ConvertFromFahrenheit(-40, mode),
                 TemperatureUtils.ConvertFromFahrenheit(140, mode));
