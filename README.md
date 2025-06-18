@@ -76,7 +76,7 @@ Once the mod is published:
 ## 🙏 Credits
 
 - Code and design by **hawqeye19**
-- Harmony library by **Andreas Pardeike**
+- Harmony library by **Brrainz**
 - Special thanks to the RimWorld modding community for tools and documentation
 
 ---
