@@ -3,17 +3,47 @@ using Verse;
 
 namespace RoomTempDisplay
 {
+    /// <summary>
+    /// Represents a mod that provides functionality for displaying room temperature information and allows users to
+    /// configure related settings.
+    /// </summary>
+    /// <remarks>
+    /// This mod enables users to customize how room temperature data is displayed in the game,
+    /// including options for temperature range colors, overlay text, and gradient extremes. It also provides sliders
+    /// for adjusting comfortable and extreme temperature ranges.
+    /// </remarks>
     public class RoomTempDisplayMod : Mod
     {
+        /// <summary>
+        /// Gets or sets the display settings for room temperature.
+        /// </summary>
         public static RoomTempDisplaySettings Settings;
 
+        /// <summary>
+        /// Gets the settings category name for the room temperature display.
+        /// </summary>
+        /// <returns>A string representing the settings category, which is "Room Temperature Display".</returns>
+        public override string SettingsCategory() => "Room Temperature Display";
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RoomTempDisplayMod"/> class with the specified content pack.
+        /// </summary>
+        /// <param name="content">The content pack associated with this mod. Cannot be null.</param>
         public RoomTempDisplayMod(ModContentPack content) : base(content)
         {
             Settings = GetSettings<RoomTempDisplaySettings>();
         }
 
-        public override string SettingsCategory() => "Room Temperature Display";
-
+        /// <summary>
+        /// Renders the settings window contents for configuring the mod's options.
+        /// </summary>
+        /// <param name="inRect">The rectangle area within which the settings UI should be drawn.</param>
+        /// <remarks>
+        /// This method displays various configuration options for the mod, including general
+        /// settings, temperature gradient extremes, and comfortable temperature ranges. Users can adjust these 
+        /// settings using checkboxes and sliders. The displayed temperature values are automatically converted based
+        /// on the current temperature display mode (Celsius, Fahrenheit, or Kelvin).
+        /// </remarks>
         public override void DoSettingsWindowContents(Rect inRect)
         {
             var listing = new Listing_Standard();
@@ -24,6 +54,7 @@ namespace RoomTempDisplay
             listing.Label("RoomTempDisplay_Settings_Options".Translate());
             Text.Font = GameFont.Small;
             listing.CheckboxLabeled("RoomTempDisplay_Settings_ShowColors".Translate(), ref Settings.showTemperatureRangeColors);
+            listing.CheckboxLabeled("RoomTempDisplay_Settings_ShowOverlayText".Translate(), ref Settings.showOverlayText);
             listing.GapLine();
             listing.Gap();
 

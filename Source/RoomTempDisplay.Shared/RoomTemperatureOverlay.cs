@@ -6,11 +6,17 @@ using Verse;
 
 namespace RoomTempDisplay
 {
+    /// <summary>
+    /// Provides functionality for rendering room temperature overlays in the game.
+    /// </summary>
+    /// <remarks>
+    /// This class is responsible for displaying temperature labels and overlays for rooms in the
+    /// game world. It manages caching of temperature data and label positions to optimize performance. The temperature
+    /// display adapts to the current temperature mode (Celsius, Fahrenheit, or Kelvin) and can optionally use color
+    /// coding to indicate temperature ranges (e.g., cold, comfortable, or hot).
+    /// </remarks>
     internal static class RoomTemperatureOverlay
     {
-        // Fix for CS8370: Replace collection expressions with explicit instantiation  
-        internal static readonly Dictionary<int, IntVec3> RoomLabelCache = new Dictionary<int, IntVec3>();
-
         private struct TempLabelData
         {
             public string Label;
@@ -18,9 +24,32 @@ namespace RoomTempDisplay
             public float LastTemp;
         }
 
+        /// <summary>
+        /// Represents a cache that maps room identifiers to their corresponding labels.
+        /// </summary>
+        /// <remarks>
+        /// This dictionary is used to store precomputed room labels for quick lookup.  The key
+        /// is the room's unique identifier, and the value is the label represented as an 
+        /// <see cref="IntVec3"/>.
+        /// </remarks>
+        internal static readonly Dictionary<int, IntVec3> RoomLabelCache = new Dictionary<int, IntVec3>();
         private static readonly Dictionary<int, TempLabelData> TempLabelCache = new Dictionary<int, TempLabelData>();
         private const float TempChangeThreshold = 0.5f;
 
+        /// <summary>
+        /// Draws temperature labels for rooms on the map, based on the current temperature settings and display
+        /// preferences.
+        /// </summary>
+        /// <remarks>
+        /// This method renders temperature labels for rooms in the current map, provided that
+        /// the temperature overlay or the custom room temperature toggle is enabled. Labels are displayed only for
+        /// valid rooms that are fully roofed, not fogged, and do not use outdoor temperature. The labels are
+        /// color-coded based on temperature ranges if the corresponding setting is enabled.  The method respects the
+        /// current temperature display mode (Celsius, Fahrenheit, or Kelvin) and adjusts the label format accordingly.
+        /// It also ensures that labels are only drawn for rooms visible within the camera's current view.  If the
+        /// temperature overlay is active, larger labels are displayed at the center of each room. Otherwise, smaller
+        /// labels are displayed at a designated label cell within the room.
+        /// </remarks>
         internal static void DrawRoomTemperatures()
         {
             // Exit if world map is currently rendered
@@ -117,7 +146,7 @@ namespace RoomTempDisplay
                     }
                 }
 
-                if (overlayActive)
+                if (overlayActive && RoomTempDisplayMod.Settings.showOverlayText)
                 {
                     IntVec3 center = room.ExtentsClose.CenterCell;
                     if (center.IsValid && Find.CameraDriver.CurrentViewRect.ExpandedBy(1).Contains(center))
@@ -133,6 +162,18 @@ namespace RoomTempDisplay
             }
         }
 
+        /// <summary>
+        /// Determines the most suitable cell to use as the label position for the specified room.
+        /// </summary>
+        /// <param name="room">The room for which the label cell is being determined. Must not be null.</param>
+        /// <returns>The <see cref="IntVec3"/> representing the label cell for the room. If no valid cell is found,  returns an
+        /// invalid <see cref="IntVec3"/> instance.</returns>
+        /// <remarks>
+        /// The label cell is selected based on specific criteria, prioritizing border cells that
+        /// are within  bounds, roofed, and have an edifice. If no such cell is found, fallback criteria are applied, 
+        /// including checking other roofed border cells or roofed cells within the room. The result is cached  for
+        /// future calls to improve performance.
+        /// </remarks>
         private static IntVec3 GetLabelCell(Room room)
         {
             if (RoomLabelCache.TryGetValue(room.ID, out IntVec3 cached) && cached.IsValid)
@@ -173,6 +214,13 @@ namespace RoomTempDisplay
             return cell;
         }
 
+        /// <summary>
+        /// Removes the cached labels associated with the specified room ID.
+        /// </summary>
+        /// <param name="roomId">The unique identifier of the room whose labels should be removed from the cache.</param>
+        /// <remarks>
+        /// This method clears both the room label cache and the temporary label cache for the specified room ID.
+        /// </remarks>
         internal static void RemoveLabelCache(int roomId)
         {
             RoomLabelCache.Remove(roomId);

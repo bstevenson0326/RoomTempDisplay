@@ -3,8 +3,23 @@ using Verse;
 
 namespace RoomTempDisplay
 {
+    /// <summary>
+    /// Provides utility methods for converting temperature values between different temperature scales.
+    /// </summary>
+    /// <remarks>
+    /// This class includes methods for converting temperatures to and from Fahrenheit, supporting
+    /// Celsius, Kelvin, and Fahrenheit as input and output scales. It is intended for internal use and assumes valid
+    /// input values for the specified temperature scales.
+    /// </remarks>
     internal static class TemperatureUtils
     {
+        /// <summary>
+        /// Converts a temperature value to Fahrenheit from the specified temperature display mode.
+        /// </summary>
+        /// <param name="value">The temperature value to convert.</param>
+        /// <param name="from">The <see cref="TemperatureDisplayMode"/> representing the unit of the input temperature value.</param>
+        /// <returns>The equivalent temperature in Fahrenheit.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the <paramref name="from"/> parameter is not a valid <see cref="TemperatureDisplayMode"/>.</exception>
         internal static float ConvertToFahrenheit(float value, TemperatureDisplayMode from)
         {
             switch (from)
@@ -20,6 +35,14 @@ namespace RoomTempDisplay
             }
         }
 
+        /// <summary>
+        /// Converts a temperature value from Fahrenheit to the specified temperature scale.
+        /// </summary>
+        /// <param name="fahrenheit">The temperature value in Fahrenheit to convert.</param>
+        /// <param name="to">The target temperature scale to convert to. Must be one of the <see cref="TemperatureDisplayMode"/> values.</param>
+        /// <returns>The converted temperature value in the specified scale. If <paramref name="to"/> is <see
+        /// cref="TemperatureDisplayMode.Fahrenheit"/>,  the original value is returned unchanged.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if <paramref name="to"/> is not a valid <see cref="TemperatureDisplayMode"/> value.</exception>
         internal static float ConvertFromFahrenheit(float fahrenheit, TemperatureDisplayMode to)
         {
             switch (to)

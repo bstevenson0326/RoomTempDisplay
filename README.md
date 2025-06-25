@@ -2,7 +2,7 @@
 
 **Author**: hawqeye19  
 **Package ID**: `hawqeye19.RoomTempDisplay`  
-**Version**: 1.0.0
+**Version**: 1.0.1
 
 ---
 
@@ -15,7 +15,8 @@ This mod overlays room temperatures directly on the map, making it easy to monit
 - Displays room temperature labels on all roofed indoor areas
 - Automatically hides labels on unroofed tiles or world map view
 - Small wall-aligned labels when overlay is off
-- Large, centered labels when Rimworld's built-in temperature overlay is active
+- Uses base game options for displaying in Farenheit, Celsius, or Kelvin.
+- Optional: large, centered labels when Rimworld's built-in temperature overlay is active. Configured in settings.
 - Color-coded temperatures for fast visual cues (configurable)
 - In-game mod settings for customizing thresholds and label appearance
 - Harmony patching for clean compatibility
@@ -24,7 +25,7 @@ This mod overlays room temperatures directly on the map, making it easy to monit
 
 ## 📦 Installation
 
-You can install this mod either through the **Steam Workshop** or manually via **GitHub**.
+You can install this via the **Steam Workshop**.
 
 ---
 
@@ -32,7 +33,7 @@ You can install this mod either through the **Steam Workshop** or manually via *
 
 Once the mod is published:
 
-1. Subscribe to **Room Temperature Display** on the [Steam Workshop](https://steamcommunity.com/app/294100/workshop/).
+1. Subscribe to **Room Temperature Display** on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3502303262).
 2. Steam will automatically download and install the mod.
 3. Launch Rimworld and enable **Room Temperature Display** in the Mods menu.
 
@@ -40,28 +41,9 @@ Once the mod is published:
 
 ---
 
-### 📁 Manual Installation (GitHub)
-
-1. Go to the [Releases page](https://github.com/bstevenson0326/RoomTempDisplay/releases).
-2. Download the file named `RoomTempDisplay.zip` under the latest release.
-3. Extract the ZIP file.
-4. Move the extracted `RoomTempDisplay` folder to your Rimworld `Mods/` directory:
-   - **Windows**:  
-     `C:\Program Files (x86)\Steam\steamapps\common\Rimworld\Mods\`
-   - **Mac**:  
-     `~/Library/Application Support/Steam/steamapps/common/Rimworld/Mods/`
-   - **Linux**:  
-     `~/.steam/steam/steamapps/common/Rimworld/Mods/`
-
-5. Launch Rimworld and enable **Room Temperature Display** in the Mods menu.
-
-🛠 Note: Manual installation does **not** auto-update. To get updates, repeat these steps using the latest release ZIP.
-
----
-
 ## 🧩 Requirements
 
-- [Harmony](https://github.com/pardeike/Harmony) (automatically loaded if you're using Steam Workshop)
+- [Harmony](https://github.com/pardeike/Harmony)
 
 ---
 

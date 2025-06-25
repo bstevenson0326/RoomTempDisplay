@@ -2,13 +2,14 @@
   <name>Room Temperature Display</name>
   <author>hawqeye19</author>
   <packageId>hawqeye19.RoomTempDisplay</packageId>
-  <modVersion>1.0.0</modVersion>
+  <modVersion>1.0.1</modVersion>
   <url>https://github.com/bstevenson0326/RoomTempDisplay</url>
   <description>
 Displays each room's temperature directly on the map, helping you monitor heating and cooling at a glance.
 
 • Small wall-adjacent labels when the temperature overlay is off.  
-• Large centered labels when the in-game temperature overlay is on.  
+• Large centered labels when the in-game temperature overlay is on. Configured in settings.
+• Uses base game options for displaying in Farenheit, Celsius, or Kelvin.
 • Optional color gradients for cold, comfortable, and hot ranges.  
 • Settings menu to adjust comfort thresholds and gradient behavior.  
 • Toggle display with a Play Settings button (green checkmark when active).  

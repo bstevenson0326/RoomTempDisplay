@@ -6,7 +6,8 @@
 	<!-- Settings Menu -->
 	<RoomTempDisplay_Settings_Title>Room Temperature Display Settings</RoomTempDisplay_Settings_Title>
   <RoomTempDisplay_Settings_Options>Options</RoomTempDisplay_Settings_Options>
-	<RoomTempDisplay_Settings_ShowColors>Color-code labels based on temperature</RoomTempDisplay_Settings_ShowColors>
+	<RoomTempDisplay_Settings_ShowColors>Color-code labels based on temperature?</RoomTempDisplay_Settings_ShowColors>
+	<RoomTempDisplay_Settings_ShowOverlayText>Show Temperature on Overlay?</RoomTempDisplay_Settings_ShowOverlayText>
 	<RoomTempDisplay_Settings_ColdMin>Cold Minimum ({0}):</RoomTempDisplay_Settings_ColdMin>
 	<RoomTempDisplay_Settings_HotMax>Hot Maximum ({0}):</RoomTempDisplay_Settings_HotMax>
 	<RoomTempDisplay_Settings_GradientLabel>Gradient Range</RoomTempDisplay_Settings_GradientLabel>
