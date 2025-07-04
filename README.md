@@ -2,7 +2,7 @@
 
 **Author**: hawqeye19  
 **Package ID**: `hawqeye19.RoomTempDisplay`  
-**Version**: 1.0.1
+**Version**: 1.0.2
 
 ---
 
@@ -12,7 +12,8 @@ This mod overlays room temperatures directly on the map, making it easy to monit
 
 ### 🔹 Features
 
-- Displays room temperature labels on all roofed indoor areas
+- Displays room temperature labels on all enclosed structures
+- New Gizmo under Architect > Orders to control individual rooms and spaces... Don't care if your prisoners overheat or freeze? Turn it off!
 - Automatically hides labels on unroofed tiles or world map view
 - Small wall-aligned labels when overlay is off
 - Uses base game options for displaying in Farenheit, Celsius, or Kelvin.

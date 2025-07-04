@@ -9,12 +9,10 @@ namespace RoomTempDisplay
     /// <summary>
     /// Provides functionality for rendering room temperature overlays in the game.
     /// </summary>
-    /// <remarks>
-    /// This class is responsible for displaying temperature labels and overlays for rooms in the
-    /// game world. It manages caching of temperature data and label positions to optimize performance. The temperature
-    /// display adapts to the current temperature mode (Celsius, Fahrenheit, or Kelvin) and can optionally use color
-    /// coding to indicate temperature ranges (e.g., cold, comfortable, or hot).
-    /// </remarks>
+    /// <remarks>This class is responsible for displaying temperature labels and color-coded overlays for
+    /// rooms based on their current temperature. It supports both custom temperature overlays and the vanilla
+    /// temperature overlay, depending on the user's settings. The overlay dynamically updates to reflect temperature
+    /// changes and uses caching to optimize performance.</remarks>
     internal static class RoomTemperatureOverlay
     {
         private struct TempLabelData
@@ -24,35 +22,22 @@ namespace RoomTempDisplay
             public float LastTemp;
         }
 
-        /// <summary>
-        /// Represents a cache that maps room identifiers to their corresponding labels.
-        /// </summary>
-        /// <remarks>
-        /// This dictionary is used to store precomputed room labels for quick lookup.  The key
-        /// is the room's unique identifier, and the value is the label represented as an 
-        /// <see cref="IntVec3"/>.
-        /// </remarks>
         internal static readonly Dictionary<int, IntVec3> RoomLabelCache = new Dictionary<int, IntVec3>();
         private static readonly Dictionary<int, TempLabelData> TempLabelCache = new Dictionary<int, TempLabelData>();
         private const float TempChangeThreshold = 0.5f;
+        private static readonly Color ColdBlue = new Color(0.4f, 0.6f, 1f);
+        private static readonly Color HotRed = new Color(1f, 0.4f, 0.3f);
 
         /// <summary>
         /// Draws temperature labels for rooms on the map, based on the current temperature settings and display
         /// preferences.
         /// </summary>
-        /// <remarks>
-        /// This method renders temperature labels for rooms in the current map, provided that
-        /// the temperature overlay or the custom room temperature toggle is enabled. Labels are displayed only for
-        /// valid rooms that are fully roofed, not fogged, and do not use outdoor temperature. The labels are
-        /// color-coded based on temperature ranges if the corresponding setting is enabled.  The method respects the
-        /// current temperature display mode (Celsius, Fahrenheit, or Kelvin) and adjusts the label format accordingly.
-        /// It also ensures that labels are only drawn for rooms visible within the camera's current view.  If the
-        /// temperature overlay is active, larger labels are displayed at the center of each room. Otherwise, smaller
-        /// labels are displayed at a designated label cell within the room.
-        /// </remarks>
+        /// <remarks>This method displays temperature information for rooms on the map, either as an
+        /// overlay or as labels, depending on the user's settings. It respects the current temperature mode (Celsius,
+        /// Fahrenheit, or Kelvin) and applies color coding to indicate temperature ranges if enabled. The method does
+        /// not render labels if the temperature overlay is disabled or if the map is not currently active.</remarks>
         internal static void DrawRoomTemperatures()
         {
-            // Exit if world map is currently rendered
 #if RW_1_5
             if (WorldRendererUtility.WorldRenderedNow)
             {
@@ -64,7 +49,9 @@ namespace RoomTempDisplay
                 return;
             }
 #endif
-            if (!RoomTempToggleState.ShowTemperatures && !Find.PlaySettings.showTemperatureOverlay)
+            bool isVanillaOverlay = Find.PlaySettings.showTemperatureOverlay;
+            bool isShowTemperaturesOn = RoomTempToggleState.ShowTemperatures;
+            if (!isShowTemperaturesOn && !isVanillaOverlay)
             {
                 return;
             }
@@ -75,18 +62,13 @@ namespace RoomTempDisplay
                 return;
             }
 
-            bool overlayActive = Find.PlaySettings.showTemperatureOverlay;
-
 #if RW_1_5
             foreach (Room room in map.regionGrid.allRooms)
 #else
             foreach (Room room in map.regionGrid.AllRooms)
 #endif
             {
-                if (room == null
-                    || room.UsesOutdoorTemperature
-                    || room.CellCount <= 1
-                    || !room.Cells.All(c => c.Roofed(map) && !c.Fogged(map)))
+                if (!RoomTempOverrideState.IsOverrideOn(room))
                 {
                     continue;
                 }
@@ -94,6 +76,7 @@ namespace RoomTempDisplay
                 float tempDisplay = GenTemperature.CelsiusTo(room.Temperature, Prefs.TemperatureMode);
                 float tempF = GenTemperature.CelsiusTo(room.Temperature, TemperatureDisplayMode.Fahrenheit);
 
+                // If the temperature labels are enabled, cache the label and color for the room
                 if (!TempLabelCache.TryGetValue(room.ID, out TempLabelData cachedData) || Mathf.Abs(cachedData.LastTemp - tempDisplay) > TempChangeThreshold)
                 {
                     string suffix = Prefs.TemperatureMode == TemperatureDisplayMode.Fahrenheit ? "°F" :
@@ -109,18 +92,15 @@ namespace RoomTempDisplay
                         float comfortMaxF = RoomTempDisplayMod.Settings.maxComfortableFahrenheit;
                         float hotMaxF = RoomTempDisplayMod.Settings.hotMaxFahrenheit;
 
-                        var coldBlue = new Color(0.4f, 0.6f, 1f);
-                        var hotRed = new Color(1f, 0.4f, 0.3f);
-
                         if (tempF < comfortMinF)
                         {
                             float t = Mathf.InverseLerp(coldMinF, comfortMinF, tempF);
-                            color = Color.Lerp(coldBlue, Color.white, t);
+                            color = Color.Lerp(ColdBlue, Color.white, t);
                         }
                         else if (tempF > comfortMaxF)
                         {
                             float t = Mathf.InverseLerp(comfortMaxF, hotMaxF, tempF);
-                            color = Color.Lerp(Color.white, hotRed, t);
+                            color = Color.Lerp(Color.white, HotRed, t);
                         }
                     }
 
@@ -134,7 +114,8 @@ namespace RoomTempDisplay
                     TempLabelCache[room.ID] = cachedData;
                 }
 
-                if (RoomTempToggleState.ShowTemperatures && !overlayActive)
+                // If the temperature labels are enabled, draw the label on the room's label cell
+                if (isShowTemperaturesOn && !isVanillaOverlay)
                 {
                     IntVec3 labelCell = GetLabelCell(room);
                     if (labelCell.IsValid && Find.CameraDriver.CurrentViewRect.ExpandedBy(1).Contains(labelCell))
@@ -146,7 +127,8 @@ namespace RoomTempDisplay
                     }
                 }
 
-                if (overlayActive && RoomTempDisplayMod.Settings.showOverlayText)
+                // If the vanilla overlay is enabled, draw the overlay color on the room's cells
+                if (isVanillaOverlay && RoomTempDisplayMod.Settings.showOverlayText)
                 {
                     IntVec3 center = room.ExtentsClose.CenterCell;
                     if (center.IsValid && Find.CameraDriver.CurrentViewRect.ExpandedBy(1).Contains(center))
@@ -165,47 +147,50 @@ namespace RoomTempDisplay
         /// <summary>
         /// Determines the most suitable cell to use as the label position for the specified room.
         /// </summary>
-        /// <param name="room">The room for which the label cell is being determined. Must not be null.</param>
-        /// <returns>The <see cref="IntVec3"/> representing the label cell for the room. If no valid cell is found,  returns an
+        /// <remarks>The method prioritizes the label cell selection in the following order: 1. A cached
+        /// label cell, if it is still valid. 2. A border cell containing an edifice. 3. Any valid border cell. 4. Any
+        /// valid interior cell.  The result is cached for future calls to improve performance.</remarks>
+        /// <param name="room">The room for which to determine the label cell. Cannot be null.</param>
+        /// <returns>The <see cref="IntVec3"/> representing the label cell for the room.  If no valid cell is found, returns an
         /// invalid <see cref="IntVec3"/> instance.</returns>
-        /// <remarks>
-        /// The label cell is selected based on specific criteria, prioritizing border cells that
-        /// are within  bounds, roofed, and have an edifice. If no such cell is found, fallback criteria are applied, 
-        /// including checking other roofed border cells or roofed cells within the room. The result is cached  for
-        /// future calls to improve performance.
-        /// </remarks>
         private static IntVec3 GetLabelCell(Room room)
         {
-            if (RoomLabelCache.TryGetValue(room.ID, out IntVec3 cached) && cached.IsValid)
+            if (RoomLabelCache.TryGetValue(room.ID, out IntVec3 cachedCell) && cachedCell.IsValid)
             {
-                return cached;
+                return cachedCell;
             }
 
             Map map = room.Map;
-            IntVec3 cell = room.BorderCells
-                .Where(c => c.InBounds(map) && c.Roofed(map) && c.GetEdifice(map) != null)
+            IntVec3 cell;
+
+            // Try to find a border cell with an edifice first
+            cell = room.BorderCells
+                .Where(c => c.InBounds(map) && c.GetEdifice(map) != null)
                 .OrderByDescending(c => c.z)
                 .ThenByDescending(c => c.x)
                 .FirstOrDefault();
 
+            // If no such cell is found, try to find any valid border cell
             if (!cell.IsValid)
             {
                 cell = room.BorderCells
-                    .Where(c => c.InBounds(map) && c.Roofed(map))
+                    .Where(c => c.InBounds(map))
                     .OrderByDescending(c => c.z)
                     .ThenByDescending(c => c.x)
                     .FirstOrDefault();
             }
 
+            // If still no valid cell, try to find any valid interior cell
             if (!cell.IsValid)
             {
                 cell = room.Cells
-                    .Where(c => c.InBounds(map) && c.Roofed(map))
+                    .Where(c => c.InBounds(map))
                     .OrderByDescending(c => c.z)
                     .ThenByDescending(c => c.x)
                     .FirstOrDefault();
             }
 
+            // If no valid cell is found, return an invalid IntVec3
             if (cell.IsValid)
             {
                 RoomLabelCache[room.ID] = cell;

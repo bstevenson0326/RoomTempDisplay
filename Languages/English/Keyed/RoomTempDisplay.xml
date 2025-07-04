@@ -5,7 +5,7 @@
 	<RoomTempDisplay_Label_Temperature>{0}°</RoomTempDisplay_Label_Temperature>
 	<!-- Settings Menu -->
 	<RoomTempDisplay_Settings_Title>Room Temperature Display Settings</RoomTempDisplay_Settings_Title>
-  <RoomTempDisplay_Settings_Options>Options</RoomTempDisplay_Settings_Options>
+	<RoomTempDisplay_Settings_Options>Options</RoomTempDisplay_Settings_Options>
 	<RoomTempDisplay_Settings_ShowColors>Color-code labels based on temperature?</RoomTempDisplay_Settings_ShowColors>
 	<RoomTempDisplay_Settings_ShowOverlayText>Show Temperature on Overlay?</RoomTempDisplay_Settings_ShowOverlayText>
 	<RoomTempDisplay_Settings_ColdMin>Cold Minimum ({0}):</RoomTempDisplay_Settings_ColdMin>
@@ -13,5 +13,8 @@
 	<RoomTempDisplay_Settings_GradientLabel>Gradient Range</RoomTempDisplay_Settings_GradientLabel>
 	<RoomTempDisplay_Settings_ComfortLabel>Comfort Range</RoomTempDisplay_Settings_ComfortLabel>
 	<RoomTempDisplay_Settings_MinComfort>Minimum Comfortable Temperature ({0}):</RoomTempDisplay_Settings_MinComfort>
-	<RoomTempDisplay_Settings_MaxComfort>Cold Minimum ({0}):</RoomTempDisplay_Settings_MaxComfort>
+	<RoomTempDisplay_Settings_MaxComfort>Maximum Comfortable Temperature ({0}):</RoomTempDisplay_Settings_MaxComfort>
+	<!-- Override Gizmo -->
+	<RoomTempDisplay_OverrideToggle_Label>Toggle Room Temperature</RoomTempDisplay_OverrideToggle_Label>
+	<RoomTempDisplay_OverrideToggle_Desc>Click a room to override its temperature display, even if not roofed.</RoomTempDisplay_OverrideToggle_Desc>
 </LanguageData>
