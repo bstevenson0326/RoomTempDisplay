@@ -63,6 +63,7 @@ namespace RoomTempDisplay.Patch
         internal static void Postfix(Room __instance)
         {
             RoomTemperatureOverlay.RemoveLabelCache(__instance.ID);
+            RoomTempOverrideState.ClearDefaultCache();
         }
     }
 

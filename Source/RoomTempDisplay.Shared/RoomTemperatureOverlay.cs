@@ -28,6 +28,10 @@ namespace RoomTempDisplay
         private static readonly Color ColdBlue = new Color(0.4f, 0.6f, 1f);
         private static readonly Color HotRed = new Color(1f, 0.4f, 0.3f);
 
+        // Throttling variables to limit how often we rebuild the temperature labels
+        private const int MinTickInterval = 20;
+        private static int _lastRebuildTick = -MinTickInterval;
+
         /// <summary>
         /// Draws temperature labels for rooms on the map, based on the current temperature settings and display
         /// preferences.
@@ -44,7 +48,7 @@ namespace RoomTempDisplay
                 return;
             }
 #else
-            if (WorldRendererUtility.CurrentWorldRenderMode == WorldRenderMode.Planet)
+            if (WorldRendererUtility.CurrentWorldRenderMode == WorldRenderMode.Planet) 
             {
                 return;
             }
@@ -62,14 +66,26 @@ namespace RoomTempDisplay
                 return;
             }
 
+            // Throttle rebuilds to avoid performance issues
+            int now = Find.TickManager.TicksGame;
+            bool isRebuilding = now - _lastRebuildTick >= MinTickInterval;
+            if (isRebuilding)
+            {
+                _lastRebuildTick = now;
+            }
+
 #if RW_1_5
-            foreach (Room room in map.regionGrid.allRooms)
+            List<Room> rooms = map.regionGrid.allRooms;
 #else
-            foreach (Room room in map.regionGrid.AllRooms)
+            var rooms = map.regionGrid.AllRooms;
 #endif
+
+            foreach (Room room in rooms)
             {
                 if (!RoomTempOverrideState.IsOverrideOn(room))
                 {
+                    // if we’re hiding this room, make sure its caches are cleared
+                    RemoveRoomCache(room?.ID ?? -1);
                     continue;
                 }
 
@@ -77,7 +93,8 @@ namespace RoomTempDisplay
                 float tempF = GenTemperature.CelsiusTo(room.Temperature, TemperatureDisplayMode.Fahrenheit);
 
                 // If the temperature labels are enabled, cache the label and color for the room
-                if (!TempLabelCache.TryGetValue(room.ID, out TempLabelData cachedData) || Mathf.Abs(cachedData.LastTemp - tempDisplay) > TempChangeThreshold)
+                if (isRebuilding && (!TempLabelCache.TryGetValue(room.ID, out TempLabelData cachedData)
+                        || Mathf.Abs(cachedData.LastTemp - tempDisplay) > TempChangeThreshold))
                 {
                     string suffix = Prefs.TemperatureMode == TemperatureDisplayMode.Fahrenheit ? "°F" :
                                     Prefs.TemperatureMode == TemperatureDisplayMode.Kelvin ? "K" : "°C";
@@ -104,43 +121,61 @@ namespace RoomTempDisplay
                         }
                     }
 
-                    cachedData = new TempLabelData
+                    TempLabelCache[room.ID] = new TempLabelData
                     {
                         Label = label,
                         Color = color,
                         LastTemp = tempDisplay
                     };
-
-                    TempLabelCache[room.ID] = cachedData;
                 }
 
-                // If the temperature labels are enabled, draw the label on the room's label cell
-                if (isShowTemperaturesOn && !isVanillaOverlay)
+                if (TempLabelCache.TryGetValue(room.ID, out TempLabelData data))
                 {
-                    IntVec3 labelCell = GetLabelCell(room);
-                    if (labelCell.IsValid && Find.CameraDriver.CurrentViewRect.ExpandedBy(1).Contains(labelCell))
+                    // If the temperature labels are enabled, draw the label on the room's label cell
+                    if (isShowTemperaturesOn && !isVanillaOverlay)
                     {
-                        Vector2 screenPos = GenMapUI.LabelDrawPosFor(labelCell);
-                        Text.Font = GameFont.Tiny;
-                        GUI.color = cachedData.Color;
-                        Widgets.Label(new Rect(screenPos.x - 15f, screenPos.y - 7f, 50f, 20f), cachedData.Label);
+                        IntVec3 labelCell = GetLabelCell(room);
+                        if (labelCell.IsValid && Find.CameraDriver.CurrentViewRect.ExpandedBy(1).Contains(labelCell))
+                        {
+                            Vector2 screenPos = GenMapUI.LabelDrawPosFor(labelCell);
+                            Text.Font = GameFont.Tiny;
+                            GUI.color = data.Color;
+                            Widgets.Label(new Rect(screenPos.x - 15f, screenPos.y - 7f, 50f, 20f), data.Label);
+                        }
                     }
-                }
 
-                // If the vanilla overlay is enabled, draw the overlay color on the room's cells
-                if (isVanillaOverlay && RoomTempDisplayMod.Settings.showOverlayText)
-                {
-                    IntVec3 center = room.ExtentsClose.CenterCell;
-                    if (center.IsValid && Find.CameraDriver.CurrentViewRect.ExpandedBy(1).Contains(center))
+                    // If the vanilla overlay is enabled, draw the overlay color on the room's cells
+                    if (isVanillaOverlay && RoomTempDisplayMod.Settings.showOverlayText)
                     {
-                        Vector2 screenPos = GenMapUI.LabelDrawPosFor(center);
-                        Text.Font = GameFont.Medium;
-                        GUI.color = cachedData.Color;
-                        Widgets.Label(new Rect(screenPos.x - 20f, screenPos.y - 12f, 100f, 30f), cachedData.Label);
+                        IntVec3 center = room.ExtentsClose.CenterCell;
+                        if (center.IsValid && Find.CameraDriver.CurrentViewRect.ExpandedBy(1).Contains(center))
+                        {
+                            Vector2 screenPos = GenMapUI.LabelDrawPosFor(center);
+                            Text.Font = GameFont.Medium;
+                            GUI.color = data.Color;
+                            Widgets.Label(new Rect(screenPos.x - 20f, screenPos.y - 12f, 100f, 30f), data.Label);
+                        }
                     }
                 }
 
                 GUI.color = Color.white;
+            }
+        }
+
+        /// <summary>
+        /// Removes cached data for a specific room.
+        /// </summary>
+        /// <param name="roomId"></param>
+        private static void RemoveRoomCache(int roomId)
+        {
+            if (RoomLabelCache.ContainsKey(roomId))
+            {
+                RoomLabelCache.Remove(roomId);
+            }
+
+            if (TempLabelCache.ContainsKey(roomId))
+            {
+                TempLabelCache.Remove(roomId);
             }
         }
 
@@ -161,36 +196,36 @@ namespace RoomTempDisplay
             }
 
             Map map = room.Map;
-            IntVec3 cell;
+            IntVec3 cell = IntVec3.Invalid;
 
             // Try to find a border cell with an edifice first
             cell = room.BorderCells
-                .Where(c => c.InBounds(map) && c.GetEdifice(map) != null)
-                .OrderByDescending(c => c.z)
-                .ThenByDescending(c => c.x)
-                .FirstOrDefault();
+                       .Where(c => c.InBounds(map) && c.GetEdifice(map) != null)
+                       .OrderByDescending(c => c.z)
+                       .ThenByDescending(c => c.x)
+                       .FirstOrDefault();
 
             // If no such cell is found, try to find any valid border cell
             if (!cell.IsValid)
             {
                 cell = room.BorderCells
-                    .Where(c => c.InBounds(map))
-                    .OrderByDescending(c => c.z)
-                    .ThenByDescending(c => c.x)
-                    .FirstOrDefault();
+                           .Where(c => c.InBounds(map))
+                           .OrderByDescending(c => c.z)
+                           .ThenByDescending(c => c.x)
+                           .FirstOrDefault();
             }
 
             // If still no valid cell, try to find any valid interior cell
             if (!cell.IsValid)
             {
                 cell = room.Cells
-                    .Where(c => c.InBounds(map))
-                    .OrderByDescending(c => c.z)
-                    .ThenByDescending(c => c.x)
-                    .FirstOrDefault();
+                           .Where(c => c.InBounds(map))
+                           .OrderByDescending(c => c.z)
+                           .ThenByDescending(c => c.x)
+                           .FirstOrDefault();
             }
 
-            // If no valid cell is found, return an invalid IntVec3
+            // If we found a valid cell, cache it
             if (cell.IsValid)
             {
                 RoomLabelCache[room.ID] = cell;
@@ -206,10 +241,6 @@ namespace RoomTempDisplay
         /// <remarks>
         /// This method clears both the room label cache and the temporary label cache for the specified room ID.
         /// </remarks>
-        internal static void RemoveLabelCache(int roomId)
-        {
-            RoomLabelCache.Remove(roomId);
-            TempLabelCache.Remove(roomId);
-        }
+        internal static void RemoveLabelCache(int roomId) => RemoveRoomCache(roomId);
     }
 }

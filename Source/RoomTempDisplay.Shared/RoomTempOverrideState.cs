@@ -13,6 +13,33 @@ namespace RoomTempDisplay
     internal static class RoomTempOverrideState
     {
         private static RoomTempOverrideMapComponent Comp => Find.CurrentMap?.GetComponent<RoomTempOverrideMapComponent>();
+        private static Map _cachedMap;
+        private static HashSet<int> _cachedDefaultIds;
+
+        /// <summary>
+        /// Clears the cached default IDs and map reference.
+        /// </summary>
+        internal static void ClearDefaultCache()
+        {
+            _cachedMap = null;
+            _cachedDefaultIds = null;
+        }
+
+        /// <summary>
+        /// Gets the cached default IDs for the specified map.
+        /// </summary>
+        /// <param name="map">The map</param>
+        /// <returns>Returns the cached IDs</returns>
+        private static HashSet<int> GetDefaultIdsCached(Map map)
+        {
+            if (_cachedDefaultIds == null || _cachedMap != map)
+            {
+                _cachedDefaultIds = ComputeDefaultIds(map);
+                _cachedMap = map;
+            }
+
+            return _cachedDefaultIds;
+        }
 
         private static HashSet<int> ComputeDefaultIds(Map map)
         {
@@ -59,8 +86,8 @@ namespace RoomTempDisplay
                 return false;
             }
 
-            HashSet<int> def = ComputeDefaultIds(room.Map);
-            return def.Contains(id);
+            // very cheap, cached:
+            return GetDefaultIdsCached(room.Map).Contains(room.ID);
         }
 
         /// <summary>
