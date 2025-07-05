@@ -47,8 +47,21 @@ namespace RoomTempDisplay
 
             Room room = c.GetRoom(map);
 
-            // Check if the room is valid for designation
-            return room.IsRoomCandidate(map);
+            // Allow the room override toggle if the room is already overridden
+            if (RoomTempOverrideState.IsOverrideOn(room))
+            {
+                return true;
+            }
+
+            // Check if the room is a valid candidate for temperature override
+            if (!room.IsRoomCandidate(map))
+            {
+                TaggedString msg = "RoomTempDisplay_OverrideToggle_Message".Translate();
+                Messages.Message(msg, MessageTypeDefOf.RejectInput);
+                return new AcceptanceReport(msg);
+            }
+
+            return true;
         }
 
         /// <summary>

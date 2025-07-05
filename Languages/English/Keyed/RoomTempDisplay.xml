@@ -17,4 +17,6 @@
 	<!-- Override Gizmo -->
 	<RoomTempDisplay_OverrideToggle_Label>Toggle Room Temperature</RoomTempDisplay_OverrideToggle_Label>
 	<RoomTempDisplay_OverrideToggle_Desc>Click a room to override its temperature display, even if not roofed.</RoomTempDisplay_OverrideToggle_Desc>
+	<!-- Messages -->
+	<RoomTempDisplay_OverrideToggle_Message>Cannot designate a room which is considered outside.</RoomTempDisplay_OverrideToggle_Message>
 </LanguageData>

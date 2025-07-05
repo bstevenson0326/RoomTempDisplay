@@ -14,6 +14,8 @@ namespace RoomTempDisplay
     /// </remarks>
     internal static class TemperatureUtils
     {
+        private const float MinRoofedFraction = 0.75f;
+
         /// <summary>
         /// Converts a temperature value to Fahrenheit from the specified temperature display mode.
         /// </summary>
@@ -68,7 +70,18 @@ namespace RoomTempDisplay
         /// <returns>Returns true if it is a room; otherwise, false.</returns>
         internal static bool IsRoomCandidate(this Room room, Map map)
         {
-            return room != null && room.ID != 0 && room.ProperRoom && room.CellCount > 1 && room.Cells.All(x => !x.Fogged(map));
+            // Validate the room object and its properties
+            if (room == null || room.ID == 0 || !room.ProperRoom || room.CellCount <= 1)
+            {
+                return false;
+            }
+
+            // Check if the room is roofed sufficiently
+            int openRoof = room.OpenRoofCount;
+            float roofedFrac = (room.CellCount - openRoof) / (float)room.CellCount;
+
+            // Ensure the room is not fogged
+            return roofedFrac >= MinRoofedFraction && room.Cells.All(c => !c.Fogged(map));
         }
     }
 }

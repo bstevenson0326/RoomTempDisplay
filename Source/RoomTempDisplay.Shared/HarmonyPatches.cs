@@ -142,4 +142,19 @@ namespace RoomTempDisplay.Patch
             __result = list;
         }
     }
+
+    /// <summary>
+    /// A Harmony patch for the <see cref="Room.Notify_RoofChanged"/> method that clears the override cache for room
+    /// temperature states after a roof change.
+    /// </summary>
+    /// <remarks>This patch ensures that the default-on state cache for room temperature overrides is
+    /// recomputed the next time it is accessed, reflecting any changes caused by the roof modification.</remarks>
+    [HarmonyPatch(typeof(Room), nameof(Room.Notify_RoofChanged))]
+    static class Room_NotifyRoofChanged_ClearOverrideCache
+    {
+        static void Postfix(Room __instance)
+        {
+            RoomTempOverrideState.ClearDefaultCache();
+        }
+    }
 }

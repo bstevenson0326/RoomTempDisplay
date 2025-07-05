@@ -2,7 +2,7 @@
   <name>Room Temperature Display</name>
   <author>hawqeye19</author>
   <packageId>hawqeye19.RoomTempDisplay</packageId>
-  <modVersion>1.0.5</modVersion>
+  <modVersion>1.0.6</modVersion>
   <url>https://github.com/bstevenson0326/RoomTempDisplay</url>
   <description>
 Displays each room's temperature directly on the map, helping you monitor heating and cooling at a glance.
@@ -13,8 +13,8 @@ Displays each room's temperature directly on the map, helping you monitor heatin
 • Optional color gradients for cold, comfortable, and hot ranges.  
 • Settings menu to adjust comfort thresholds and gradient behavior.  
 • Toggle display with a Play Settings button (green checkmark when active).  
-• Labels only appear on proper rooms (ignores doorways). Partially roofed or no roofs can be shown also, use the Gizmo to hide and show labels.  
-• Automatically updates when room shapes or temperature change.
+• Labels only appear on proper rooms or partially roofed (ignores doorways). Use the Gizmo to hide and show labels.  
+• Automatically updates when room shapes, roofing, or temperature change.
 • Gizmo under the Orders tab in Architect for toggling ON and OFF a singular room.
 
 Requires Harmony.
