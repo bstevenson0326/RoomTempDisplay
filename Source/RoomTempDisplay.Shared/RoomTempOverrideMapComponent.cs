@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reflection;
 using Verse;
 
 namespace RoomTempDisplay
@@ -24,12 +25,7 @@ namespace RoomTempDisplay
         /// <param name="map">The map associated with this component. Cannot be null.</param>
         public RoomTempOverrideMapComponent(Map map) : base(map) { }
 
-        /// <summary>
-        /// Handles the serialization and deserialization of the object's state, including manual on/off settings.
-        /// </summary>
-        /// <remarks>This method ensures that the <c>manualOn</c> and <c>manualOff</c> collections are
-        /// properly saved and loaded. During the loading process, if the collections are null, they are initialized to
-        /// empty sets.</remarks>
+        /// <inheritdoc />
         public override void ExposeData()
         {
             base.ExposeData();
@@ -39,6 +35,20 @@ namespace RoomTempDisplay
             {
                 manualOn = manualOn ?? new HashSet<int>();
                 manualOff = manualOff ?? new HashSet<int>();
+            }
+        }
+
+        /// <inheritdoc />
+        public override void FinalizeInit()
+        {
+            base.FinalizeInit();
+            FieldInfo lastRebuildField = typeof(RoomTemperatureOverlay)
+                .GetField("_lastRebuildTick", BindingFlags.Static | BindingFlags.NonPublic);
+
+            if (lastRebuildField != null)
+            {
+                const int minTickInterval = 20;
+                lastRebuildField.SetValue(null, Find.TickManager.TicksGame - minTickInterval);
             }
         }
     }

@@ -16,6 +16,10 @@ namespace RoomTempDisplay
         private static Map _cachedMap;
         private static HashSet<int> _cachedDefaultIds;
 
+        private static int CellToIndex(IntVec3 c, Map map) => c.z * map.Size.x + c.x;
+
+        private static IntVec3 IndexToCell(int idx, Map map) => new IntVec3(idx % map.Size.x, 0, idx / map.Size.x);
+
         /// <summary>
         /// Clears the cached default IDs and map reference.
         /// </summary>
@@ -69,13 +73,12 @@ namespace RoomTempDisplay
                 return false;
             }
 
-            int id = room.ID;
-            if (Comp.manualOn.Contains(id))
+            if (Comp.manualOn.Any(idx => room.ContainsCell(IndexToCell(idx, room.Map))))
             {
                 return true;
             }
 
-            if (Comp.manualOff.Contains(id))
+            if (Comp.manualOff.Any(idx => room.ContainsCell(IndexToCell(idx, room.Map))))
             {
                 return false;
             }
@@ -91,7 +94,7 @@ namespace RoomTempDisplay
         /// not overridden,  the method applies an override. The behavior also considers whether the room would be shown
         /// by default  and adjusts the override state accordingly.</remarks>
         /// <param name="room">The room whose override state is to be toggled. Cannot be <see langword="null"/>.</param>
-        internal static void Toggle(Room room)
+        internal static void Toggle(Room room, IntVec3 clickedCell)
         {
             if (room == null || Comp == null)
             {
@@ -101,26 +104,26 @@ namespace RoomTempDisplay
             int id = room.ID;
             Map map = room.Map;
             HashSet<int> defaultIds = ComputeDefaultIds(map);
-            bool defaultWouldShow = defaultIds.Contains(id);
+            bool defaultWouldShow = defaultIds.Contains(room.ID);
             bool currentlyOn = IsOverrideOn(room);
+            int idx = CellToIndex(clickedCell, map);
 
             if (currentlyOn)
             {
-                Comp.manualOn.Remove(id);
-
+                Comp.manualOn.RemoveWhere(i => room.ContainsCell(IndexToCell(i, map)));
                 if (defaultWouldShow)
                 {
-                    Comp.manualOff.Add(id);
+                    Comp.manualOff.Add(idx);
                 }
                 else
                 {
-                    Comp.manualOff.Remove(id);
+                    Comp.manualOff.Remove(idx);
                 }
             }
             else
             {
-                Comp.manualOff.Remove(id);
-                Comp.manualOn.Add(id);
+                Comp.manualOff.RemoveWhere(i => room.ContainsCell(IndexToCell(i, map)));
+                Comp.manualOn.Add(idx);
             }
         }
 
@@ -138,9 +141,8 @@ namespace RoomTempDisplay
                 return;
             }
 
-            int id = room.ID;
-            Comp.manualOn.Remove(id);
-            Comp.manualOff.Remove(id);
+            Comp.manualOn.RemoveWhere(i => room.ContainsCell(IndexToCell(i, room.Map)));
+            Comp.manualOff.RemoveWhere(i => room.ContainsCell(IndexToCell(i, room.Map)));
         }
     }
 }

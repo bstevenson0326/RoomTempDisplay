@@ -71,9 +71,8 @@ namespace RoomTempDisplay
             Room room = c.GetRoom(map);
             if (room != null)
             {
-                // Toggle the temperature override state for the room
-                RoomTempOverrideState.Toggle(room);
-                RoomTempOverrideState.IsOverrideOn(room);
+                // Pass along the exact cell so we can store a stable, persistent key
+                RoomTempOverrideState.Toggle(room, c);
                 SoundDefOf.Click.PlayOneShotOnCamera();
             }
         }
