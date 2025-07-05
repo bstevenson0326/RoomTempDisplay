@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using RimWorld;
+﻿using RimWorld;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
@@ -49,7 +48,7 @@ namespace RoomTempDisplay
             Room room = c.GetRoom(map);
 
             // Check if the room is valid for designation
-            return room != null && room.ID != 0 && room.CellCount > 1 && room.Cells.All(x => !x.Fogged(map));
+            return room.IsRoomCandidate(map);
         }
 
         /// <summary>

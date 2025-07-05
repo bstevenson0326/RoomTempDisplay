@@ -48,16 +48,10 @@ namespace RoomTempDisplay
 #else
             IReadOnlyList<Room> rooms = map.regionGrid.AllRooms;
 #endif
-            // Filter out rooms that are null, have an ID of 0, or have only one cell (which cannot be fogged).
-            return rooms
-                .Where(r =>
-                    r != null
-                    && r.ID != 0
-                    && r.CellCount > 1
-                    && r.Cells.All(c => !c.Fogged(map))
-                )
-                .Select(r => r.ID)
-                .ToHashSet();
+            // Filter rooms that are not null, have a valid ID, are proper rooms, have more than one cell, and are not fogged.
+            return rooms.Where(r => r.IsRoomCandidate(map))
+                        .Select(r => r.ID)
+                        .ToHashSet();
         }
 
         /// <summary>

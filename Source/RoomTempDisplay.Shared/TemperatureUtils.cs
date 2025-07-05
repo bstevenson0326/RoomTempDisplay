@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Verse;
 
 namespace RoomTempDisplay
@@ -56,6 +57,18 @@ namespace RoomTempDisplay
                 default:
                     throw new InvalidOperationException();
             }
+        }
+
+        /// <summary>
+        /// Determines whether a room is a valid candidate for temperature display based on ID, cell count, 
+        /// proper room designation, and fog status.
+        /// </summary>
+        /// <param name="room">The room to interrogate</param>
+        /// <param name="map">The map in which the room resides</param>
+        /// <returns>Returns true if it is a room; otherwise, false.</returns>
+        internal static bool IsRoomCandidate(this Room room, Map map)
+        {
+            return room != null && room.ID != 0 && room.ProperRoom && room.CellCount > 1 && room.Cells.All(x => !x.Fogged(map));
         }
     }
 }
