@@ -2,7 +2,7 @@
 
 **Author**: hawqeye19  
 **Package ID**: `hawqeye19.RoomTempDisplay`  
-**Version**: 1.0.6
+**Version**: 1.0.7
 
 ---
 
@@ -19,6 +19,7 @@ This mod overlays room temperatures directly on the map, making it easy to monit
 - Optional: large, centered labels when Rimworld's built-in temperature overlay is active. Configured in settings.
 - Color-coded temperatures for fast visual cues (configurable)
 - In-game mod settings for customizing thresholds and label appearance
+- Hotkeys (default to not set) available under Controls > Keyboard Configuration > In-Game Global section called 'Toggle Room Temperature Display' and 'Toggle Vanilla Temperature Overlay'. 
 - Harmony patching for clean compatibility
 
 ---

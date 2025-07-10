@@ -78,7 +78,22 @@ namespace RoomTempDisplay.Patch
     [HarmonyPatch(typeof(PlaySettings), "DoPlaySettingsGlobalControls")]
     public static class PlaySettings_RoomTempToggle_Patch
     {
-        public static void Postfix(WidgetRow row, bool worldView)
+        private static KeyBindingDef _rtdToggleRoomTemp;
+
+        private static KeyBindingDef RTD_ToggleRoomTemp
+        {
+            get
+            {
+                if (_rtdToggleRoomTemp == null)
+                {
+                    _rtdToggleRoomTemp = DefDatabase<KeyBindingDef>.GetNamedSilentFail("RTD_ToggleRoomTemp");
+                }
+
+                return _rtdToggleRoomTemp;
+            }
+        }
+
+        internal static void Postfix(WidgetRow row, bool worldView)
         {
 #if RW_1_5
             if (WorldRendererUtility.WorldRenderedNow)
@@ -91,6 +106,11 @@ namespace RoomTempDisplay.Patch
                 return;
             }
 #endif
+            if (RTD_ToggleRoomTemp?.KeyDownEvent == true)
+            {
+                RoomTempToggleState.ShowTemperatures = !RoomTempToggleState.ShowTemperatures;
+                SoundDefOf.Click.PlayOneShotOnCamera();
+            }
 
             Texture2D icon = ContentFinder<Texture2D>.Get("UI/Buttons/RoomTemperature", true);
             Texture2D checkmark = ContentFinder<Texture2D>.Get("UI/Widgets/CheckOn", true);
@@ -112,6 +132,40 @@ namespace RoomTempDisplay.Patch
                 const float size = 12f;
                 var checkRect = new Rect(buttonRect.xMax - size, buttonRect.yMin, size, size);
                 GUI.DrawTexture(checkRect, checkmark);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Provides a Harmony patch for the <see cref="MapInterface.HandleMapClicks"/> method to enable toggling the
+    /// temperature overlay using a custom hotkey defined in the game settings.
+    /// </summary>
+    /// <remarks>This patch adds functionality to detect a specific hotkey press and toggle the temperature
+    /// overlay in the game. The hotkey is defined by the <c>RTD_ToggleVanillaTemp</c> key binding, which is retrieved
+    /// from the game's key binding database.</remarks>
+    [HarmonyPatch(typeof(MapInterface), nameof(MapInterface.HandleMapClicks))]
+    public static class MapInterface_TemperatureOverlayHotkey_Patch
+    {
+        private static KeyBindingDef _rtdToggleVanillaTemp;
+
+        private static KeyBindingDef RTD_ToggleVanillaTemp
+        {
+            get
+            {
+                if (_rtdToggleVanillaTemp == null)
+                {
+                    _rtdToggleVanillaTemp = DefDatabase<KeyBindingDef>.GetNamedSilentFail("RTD_ToggleVanillaTemp");
+                }
+
+                return _rtdToggleVanillaTemp;
+            }
+        }
+        internal static void Postfix()
+        {
+            if (RTD_ToggleVanillaTemp?.KeyDownEvent == true)
+            {
+                Find.PlaySettings.showTemperatureOverlay = !Find.PlaySettings.showTemperatureOverlay;
+                SoundDefOf.Click.PlayOneShotOnCamera();
             }
         }
     }

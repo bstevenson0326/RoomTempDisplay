@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<KeyBindingDef>
+		<category>Game</category>
+		<defName>RTD_ToggleRoomTemp</defName>
+		<label>Toggle Room Temperature Display</label>
+		<defaultKeyCodeA/>
+	</KeyBindingDef>
+	<KeyBindingDef>
+		<category>Game</category>
+		<defName>RTD_ToggleVanillaTemp</defName>
+		<label>Toggle Vanilla Temperature Overlay</label>
+		<defaultKeyCodeA/>
+	</KeyBindingDef>
+</Defs>
