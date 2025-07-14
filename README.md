@@ -2,7 +2,7 @@
 
 **Author**: hawqeye19  
 **Package ID**: `hawqeye19.RoomTempDisplay`  
-**Version**: 1.0.7
+**Version**: 1.0.8
 
 ---
 

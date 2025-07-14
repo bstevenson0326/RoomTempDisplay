@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 using Verse;
 
 namespace RoomTempDisplay
@@ -42,14 +43,9 @@ namespace RoomTempDisplay
         public override void FinalizeInit()
         {
             base.FinalizeInit();
-            FieldInfo lastRebuildField = typeof(RoomTemperatureOverlay)
-                .GetField("_lastRebuildTick", BindingFlags.Static | BindingFlags.NonPublic);
-
-            if (lastRebuildField != null)
-            {
-                const int minTickInterval = 20;
-                lastRebuildField.SetValue(null, Find.TickManager.TicksGame - minTickInterval);
-            }
+            typeof(RoomTemperatureOverlay)
+                .GetField("_lastRebuildTime", BindingFlags.Static | BindingFlags.NonPublic)?
+                .SetValue(null, Time.realtimeSinceStartup - 2f);
         }
     }
 }

@@ -29,8 +29,7 @@ namespace RoomTempDisplay
         private static readonly Color HotRed = new Color(1f, 0.4f, 0.3f);
 
         // Throttling variables to limit how often we rebuild the temperature labels
-        private const int MinTickInterval = 20;
-        private static int _lastRebuildTick = -MinTickInterval;
+        private static float _lastRebuildTime = -2f;
 
         /// <summary>
         /// Draws temperature labels for rooms on the map, based on the current temperature settings and display
@@ -48,7 +47,7 @@ namespace RoomTempDisplay
                 return;
             }
 #else
-            if (WorldRendererUtility.CurrentWorldRenderMode == WorldRenderMode.Planet) 
+            if (WorldRendererUtility.CurrentWorldRenderMode == WorldRenderMode.Planet)
             {
                 return;
             }
@@ -67,17 +66,12 @@ namespace RoomTempDisplay
             }
 
             // Throttle rebuilds to avoid performance issues
-            int now = Find.TickManager.TicksGame;
-            bool isRebuilding = now - _lastRebuildTick >= MinTickInterval;
-            if (isRebuilding)
-            {
-                _lastRebuildTick = now;
-            }
+            bool isRebuilding = ShouldRebuildOverlay();
 
 #if RW_1_5
             List<Room> rooms = map.regionGrid.allRooms;
 #else
-            var rooms = map.regionGrid.AllRooms;
+            IReadOnlyList<Room> rooms = map.regionGrid.AllRooms;
 #endif
 
             foreach (Room room in rooms)
@@ -232,6 +226,31 @@ namespace RoomTempDisplay
             }
 
             return cell;
+        }
+
+        /// <summary>
+        /// Determines whether the overlay should be rebuilt based on the current game state and timing conditions.
+        /// </summary>
+        /// <remarks>The overlay will not be rebuilt if the game is paused or if the last rebuild occurred
+        /// less than two seconds ago.</remarks>
+        /// <returns><see langword="true"/> if the overlay should be rebuilt; otherwise, <see langword="false"/>.</returns>
+        private static bool ShouldRebuildOverlay()
+        {
+            // If the game is paused, do not rebuild the overlay
+            if (Time.timeScale == 0f)
+            {
+                return false;
+            }
+
+            // If the last rebuild was too recent, do not rebuild
+            float now = Time.realtimeSinceStartup;
+            if (now - _lastRebuildTime >= 2f)
+            {
+                _lastRebuildTime = now;
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
