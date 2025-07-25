@@ -2,7 +2,7 @@
   <name>Room Temperature Display</name>
   <author>hawqeye19</author>
   <packageId>hawqeye19.RoomTempDisplay</packageId>
-  <modVersion>1.0.8</modVersion>
+  <modVersion>1.0.9</modVersion>
   <url>https://github.com/bstevenson0326/RoomTempDisplay</url>
   <description>
 Displays each room's temperature directly on the map, helping you monitor heating and cooling at a glance.

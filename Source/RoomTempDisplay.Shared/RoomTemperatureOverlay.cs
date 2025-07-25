@@ -47,7 +47,7 @@ namespace RoomTempDisplay
                 return;
             }
 #else
-            if (WorldRendererUtility.CurrentWorldRenderMode == WorldRenderMode.Planet)
+            if (WorldRendererUtility.CurrentWorldRenderMode == WorldRenderMode.Planet || WorldComponent_GravshipController.CutsceneInProgress)
             {
                 return;
             }
